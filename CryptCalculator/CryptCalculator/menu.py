@@ -1,8 +1,9 @@
 from arithm_calculations import *
+from algebra_calculations import *
 
 def menu():
     while (1):
-        print("\n************Welcome to Cryptology math calculator**************\n")
+        print("\n**********Welcome to Cryptology math calculator************\n")
 
         choice = input("""
 1. Euclid GCD algorithm: (a,b)
@@ -21,6 +22,8 @@ def menu():
 14. Solving power comparisons n^x = b(mod m)
 15. Legendre symbol finding (a/p) = +-1, p \u2208 N
 16. Jacobi symbol finding (a/m) = +-1, m \u2208 Z
+17. Number group order |Zm(+)| or |Zm(*)|
+18. Decomposition into subgroups of adjacent subclasses for Zm
 
 Q: Logout
 
@@ -128,7 +131,8 @@ Please enter your choice: """)
                 inputStr = inputStr.replace(' ', '')
                 inputList = inputStr.rsplit(',')
                 if len(inputList) != 3:
-                    err = input("Press ENTER and type your 3 coefficients with \',\' or press the \'q\' to exit, please : ")
+                    err = input("Press ENTER and type your 3 coefficients " +
+                            "with \',\' or press the \'q\' to exit, please : ")
                     if err == 'q' or err == 'Q':
                         err_flag = 1
                         break
@@ -136,7 +140,8 @@ Please enter your choice: """)
                         continue
                 for coef in inputList:
                     if not coef.isdigit():
-                        err = input("There are any not digit symbols, plese press ENTER and correct the coefficients : ")
+                        err = input("There are any not digit symbols, plese " +
+                                    "press ENTER and correct the coefficients : ")
                         err_flag = 1
 
                 if not err_flag:   
@@ -229,8 +234,45 @@ Please enter your choice: """)
             print()
             input("Press ENTER to exit to the menu")
             continue
-        #elif choice == "17":
-        #elif choice == "18":
+        elif choice == "17":
+            print("You have choosed finding of number grop order Zm")
+            print("format: |Zm|: a / ord a")
+            m = read_natur_num("Enter a \'m\', please:  ", 'm')
+            mode = input("What kind of group do you want? Enter '+' or '*': ")
+            print()
+            if mode[0] == '+':
+                print("You have chousen a additional group (+)")
+            elif mode[0] == '*':
+                print("You have chousen a multiple group (*)")
+            else:
+                mode[0] = '+'
+                print("There is not correct mode, using default: additional (+)")
+            
+            num_group_ord(m, mode[0])
+            print()
+            input("Press ENTER to exit to the menu")
+            continue
+        elif choice == "18":
+            print("You have choosed a decomposition into subgroups of " +
+                "adjacent subclasses for Zm")
+            print("format: |Zm| = {...}\n" +
+                "H1 = {...}, H2 = {...}, ..., Hn = {...}")
+            m = read_natur_num("Enter a \'m\', please:  ", 'm')
+            mode = input("What kind of group do you want? Enter '+' or '*': ")
+            print()
+            if mode[0] == '+':
+                print("You have chousen a additional group (+)")
+            elif mode[0] == '*':
+                print("You have chousen a multiple group (*)")
+            else:
+                mode[0] = '+'
+                print("There is not correct mode, using default: additional (+)")
+           
+            decompos_into_subgroups(m, mode[0])
+            print()
+            input("Press ENTER to exit to the menu")
+            continue
+            
         #elif choice == "19":
         #elif choise == "20":
         #elif choise == "21": 
@@ -245,4 +287,5 @@ Please enter your choice: """)
             print("Please try again")
             continue
 
-menu()
+#menu()
+decompos_into_subgroups(10, '+')
