@@ -552,7 +552,7 @@ def power_comparison(nnum:int, bnum:int, mnum:int, to_str=False):
 def legendre_symbol(anum:int, pnum:int, to_str=False):
     if GCD_min(abs(anum), abs(pnum)) != 1:
         log.info(f"Sorry, the solution CAN'T BE FOUND, " +
-                f"because ({abs(anum)},{pnum}) != 1")
+                f"because GCD({abs(anum)},{pnum}) != 1")
         log.info ("BREAKING...")
         return
 
@@ -562,8 +562,11 @@ def legendre_symbol(anum:int, pnum:int, to_str=False):
         log.info(f"Start to find a Jacobi symbol\n")
         return jacobi_symbol(anum, pnum)
 
+    log.info(f"Legendre symbol of {anum}/{pnum} IS FINDING")
+
     leg_symb = 1
     if (anum * pnum < 0):
+        log.info("The argument is smoller than 0, PROCESSING")
         leg_symb *= (-1) ** ((pnum - 1) / 2)
     processed_anum = abs(anum) % pnum
     bases, indexes = decomposition_min(processed_anum)
@@ -581,9 +584,9 @@ def legendre_symbol(anum:int, pnum:int, to_str=False):
                 return
             leg_symb *= flag
     if to_str:
-        print(f"Legendre symbol of {anum} / {pnum} is {int(leg_symb)}")
+        print(f"Legendre symbol of {anum}/{pnum} is {int(leg_symb)}")
     else:
-        log.info(f"Legendre symbol of {anum} / {pnum} is {int(leg_symb)}")
+        log.info(f"Legendre symbol of {anum}/{pnum} is {int(leg_symb)}")
     return int(leg_symb)
 
 def jacobi_symbol(anum:int, mnum:int, to_str=False):
@@ -593,9 +596,12 @@ def jacobi_symbol(anum:int, mnum:int, to_str=False):
         log.info ("BREAKING...")
         return
     
+    log.info(f"Jacobi symbol of {anum}/{mnum} IS FINDING")
+
     jcb_symb = 1
 
     if (anum * mnum < 0):
+        log.info("The argument is smoller than 0, PROCESSING")
         jcb_symb *= (-1) ** int((abs(mnum) - 1) / 2)
     bases, indexes = decomposition(abs(mnum))
     for i in indexes:
@@ -604,7 +610,7 @@ def jacobi_symbol(anum:int, mnum:int, to_str=False):
     for i in range(len(bases)):
         if indexes[i]:
             try:
-                jcb_symb *= legendre_symbol(anum % bases[i], bases[i])
+                jcb_symb *= legendre_symbol_min(anum % bases[i], bases[i])
             except:
                 log.info(f"Some steps of symbol Jacobi counting CAN'T be done")
                 log.info(f"Jacobi symbol of {anum % bases[i]} / {bases[i]} " +
@@ -612,9 +618,9 @@ def jacobi_symbol(anum:int, mnum:int, to_str=False):
                 log.info ("BREAKING...")
                 return 
     if to_str:
-        print(f"Jacobi symbol of {anum} / {mnum} is {int(jcb_symb)}")
+        print(f"Jacobi symbol of {anum}/{mnum} is {int(jcb_symb)}")
     else:
-        log.info(f"Jacobi symbol of {anum} / {mnum} is {int(jcb_symb)}")
+        log.info(f"Jacobi symbol of {anum}/{mnum} is {int(jcb_symb)}")
     return int(jcb_symb)
 
 

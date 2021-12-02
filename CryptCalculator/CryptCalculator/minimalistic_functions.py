@@ -83,4 +83,35 @@ def prim_root_min(mnum:int):
         return anum
     else:
         return
+
+def legendre_symbol_min(anum:int, pnum:int, to_str=False):
+    if GCD_min(abs(anum), abs(pnum)) != 1:
+        log.info(f"Sorry, the solution CAN'T BE FOUND, " +
+                f"because GCD({abs(anum)},{pnum}) != 1")
+        log.info ("BREAKING...")
+        return
+
+    leg_symb = 1
+    if (anum * pnum < 0):
+        leg_symb *= (-1) ** ((pnum - 1) / 2)
+    processed_anum = abs(anum) % pnum
+    bases, indexes = decomposition_min(processed_anum)
+    for i in indexes:
+        i %= 2
+    for i in range(len(bases)):
+        if indexes[i]:
+            flag = ((bases[i] % pnum) ** int((pnum - 1) / 2)) % pnum
+            if flag == (pnum - 1):
+                flag = -1
+            elif flag != 1:
+                log.info(f"Ups, we have some problem: " +
+                        f"Legendre symbol can't be {flag}")
+                log.info(f"BREAKING...")
+                return
+            leg_symb *= flag
+    if to_str:
+        print(f"Legendre symbol of {anum}/{pnum} is {int(leg_symb)}")
+    else:
+        log.info(f"Legendre symbol of {anum}/{pnum} is {int(leg_symb)}")
+    return int(leg_symb)
     

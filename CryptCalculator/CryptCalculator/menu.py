@@ -287,5 +287,4 @@ Please enter your choice: """)
             print("Please try again")
             continue
 
-#menu()
-decompos_into_subgroups(10, '+')
+menu()

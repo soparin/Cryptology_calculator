@@ -28,14 +28,17 @@ def num_group_ord(mnum:int, mode:str, to_str=False):
     else:
     # a ^ ord a (mod m) = e(*) = 1
         prim_root_order = euler_func_min(mnum)
-        countind_mode = read_natur_num("Chose a kind of counting: " +
+        if mnum >= 1000:
+            countind_mode = read_natur_num("Chose a kind of counting: " +
                                    "brutforce - 1, algorithm - 2: ", "flag")
+        else:
+            countind_mode = 1
         with alive_bar(prim_root_order) as bar:
             start = time.time()
             ord_a = {i:1 for i in range(1, mnum) if GCD_min(i, mnum) == 1}
             for key  in ord_a.keys():
                 bar()
-                if countind_mode == 1:     # approximate point of equality
+                if countind_mode == 1:
                     for i in range(1, mnum):
                         if (key ** i) % mnum == 1:
                             ord_a[key] = i
@@ -62,7 +65,7 @@ def num_group_ord(mnum:int, mode:str, to_str=False):
         log.info(f"|Z{mnum}({mode})| = {prim_root_order}")
         log.info(f"a:\t {nums}")
         log.info(f"ord a:  {ord_a_list}")
-        log.info(f"time = {finish - start} seconds")
+        log.info(f"time = {finish - start} sec.")
 
     return nums, ord_a_list
 
@@ -116,18 +119,36 @@ def decompos_into_subgroups(mnum:int, mode:str, to_str=False):
 
         subgroups_dict[uniq_ord] = subgrp_list      # {key = i:[[],[],...,[]]} 
 
-
-
-    '''if to_str:
-        print(f"|Z{mnum}({mode})| = {prim_root_order}")
-        print(f"a:\t", nums)
-        print(f"ord a:", ord_a)
+    if to_str:
+        pass
     else:
-        log.info(f"|Z{mnum}({mode})| = {prim_root_order}")
-        log.info(f"a:\t {nums}")
-        log.info(f"ord a:  {ord_a_list}")
-        log.info(f"time = {finish - start} seconds")'''
-
-    print(subgroups_dict)
+        if mode == '+':
+            for sb_key in subgroups_dict.keys():
+                counter = list(subgroups_dict.keys()).index(sb_key) + 1
+                output_str = f"ord {uniq_ords[sb_key]} = {sb_key}: H{counter} = " + \
+                    f"{subgroups_dict[sb_key][0]} |H{counter}| = {i}, [Z{mnum}({mode}):" + \
+                    f"H{counter}] = {int(mnum / len(subgroups_dict[sb_key][0]))}"
+                related_classes_strs = []
+                for rl_class in range(len(subgroups_dict[sb_key][1:])):
+                    related_classes_str = f"a = {int(subgroups_dict[sb_key][1:][rl_class][0] - subgroups_dict[sb_key][0][0])}" + \
+                    f" is not included in H{counter}: {subgroups_dict[sb_key][1:][rl_class]}"
+                    related_classes_strs.append(related_classes_str)
+                log.info(output_str)
+                for one_str in related_classes_strs:
+                    log.info(one_str)
+        else:
+            for sb_key in subgroups_dict.keys():
+                counter = list(subgroups_dict.keys()).index(sb_key) + 1
+                output_str = f"ord {uniq_ords[sb_key]} = {sb_key}: H{counter} = " + \
+                    f"{subgroups_dict[sb_key][0]} |H{counter}| = {i}, [Z{mnum}({mode}):" + \
+                    f"H{counter}] = {int(euler_func_min(mnum) / len(subgroups_dict[sb_key][0]))}"
+                related_classes_strs = []
+                for rl_class in range(len(subgroups_dict[sb_key][1:])):
+                    related_classes_str = f"a = {int(subgroups_dict[sb_key][1:][rl_class][0]/subgroups_dict[sb_key][0][0])}" + \
+                    f" is not included in H{counter}: {subgroups_dict[sb_key][1:][rl_class]}"
+                    related_classes_strs.append(related_classes_str)
+                log.info(output_str)
+                for one_str in related_classes_strs:
+                    log.info(one_str)    
 
     return subgroups_dict
