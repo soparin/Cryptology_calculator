@@ -152,3 +152,23 @@ def decompos_into_subgroups(mnum:int, mode:str, to_str=False):
                     log.info(one_str)    
 
     return subgroups_dict
+
+def elipt_polinom(mnum:int):
+    nums = []
+    for x in range(23):
+        for y in range(23):
+            if (y**2)%mnum == (x**3+x+1)%mnum:
+                nums.append((x, y))
+
+    out_str = ""
+    for i in range(0,(len(nums)//8)*8,8):
+        for j in range(8):
+            out_str += (str(nums[i+j]) + "  ")
+        out_str += '\n'
+    
+
+    for j in range(len(nums) - (len(nums)//8)*8+1):
+        out_str += str(nums[(len(nums)//8)*8+j-1]) + "  "
+
+    print(out_str)
+    return

@@ -262,13 +262,14 @@ Please enter your choice: """)
             print()
             if mode[0] == '+':
                 print("You have chousen a additional group (+)")
+                decompos_into_subgroups(m, '+')
             elif mode[0] == '*':
                 print("You have chousen a multiple group (*)")
+                decompos_into_subgroups(m, '*')
             else:
-                mode[0] = '+'
                 print("There is not correct mode, using default: additional (+)")
-           
-            decompos_into_subgroups(m, mode[0])
+                decompos_into_subgroups(m, '+')
+            
             print()
             input("Press ENTER to exit to the menu")
             continue
@@ -283,7 +284,7 @@ Please enter your choice: """)
             break
 
         else:
-            print("You must only select either numbers from 1 to 14 or Q")
+            print("You must only select either numbers from 1 to 18 or Q")
             print("Please try again")
             continue
 
