@@ -1,5 +1,6 @@
 from arithm_calculations import *
 from algebra_calculations import *
+from fibonachi_generator import *
 
 def menu():
     while (1):
@@ -24,6 +25,8 @@ def menu():
 16. Jacobi symbol finding (a/m) = +-1, m \u2208 Z
 17. Number group order |Zm(+)| or |Zm(*)|
 18. Decomposition into subgroups of adjacent subclasses for Zm
+19. Set of ellipical curve and order order IS *num*
+20. Lagged Fibonacci generator launcher
 
 Q: Logout
 
@@ -269,16 +272,33 @@ Please enter your choice: """)
             else:
                 print("There is not correct mode, using default: additional (+)")
                 decompos_into_subgroups(m, '+')
-            
             print()
             input("Press ENTER to exit to the menu")
             continue
-            
-        #elif choice == "19":
-        #elif choise == "20":
-        #elif choise == "21": 
-        #elif choise == "22": 
-        #elif choise == "23":  
+        elif choice == "19":
+            print("You have choosed a printing of set of ellipical curve " +
+                "and order ")
+            print("format: order IS *num* ")
+            print("        Sets of points in Y^2=X^3+aX+b")
+            a = read_num("Enter a \'a\', please:  ", 'a')
+            b = read_num("Enter a \'b\', please:  ", 'b')
+            m = read_natur_num("Enter a \'m\', please:  ", 'm')
+            ellipt_polynomial(a, b, m)
+            print()   
+            input("Press ENTER to exit to the menu")
+            continue
+        elif choice == "20":
+            print("You have choosed a Lagged Fibonacci generator launcher ")
+            level = read_natur_num("Which level of reliability do you prefer?" +\
+                " Easy (1) or Hard (2): ", "level")
+            power = read_natur_num("Chouse an integer power k of 2 in mod(2^k)" +\
+                ", please: ", "power")
+            counter = read_natur_num("How much numbers do you want? ", "counter")
+            generator = fibonach_gen(level, power)
+            generator.generating(counter)
+            print()   
+            input("Press ENTER to exit to the menu")
+            continue
              
         elif choice=="Q" or choice == "q":
             break

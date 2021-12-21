@@ -3,13 +3,36 @@ from alive_progress import alive_bar
 import sys 
 import time
 import logging as log
-
+from math import floor
 
 from minimalistic_functions import *
 from arithm_calculations import *
 
 log.basicConfig(format="[ %(levelname)s ] %(message)s",
                     level=log.INFO, stream=sys.stdout)
+
+def read_gf2_polynome(polinomial_name:str, arg_name:str):
+    out = f"Enter a max power of your arguments of polynomial " + \
+        f"{polinomial_name}({arg_name}), please: "
+    pol_power = read_natur_num(out, 'power')
+    seq_of_args=""
+    for i in range(pol_power + 1):
+        seq_of_args += arg_name + "^" + str(i) + "\t"
+    print("Which parts is included in your polynomial? Enter a sequence of " +
+        "1 (is included) or 0 (excluded), other symbols will be ignored.")
+    print("You can also use tabs for keeping the structure")
+    print(seq_of_args)
+    frash_input = input()
+    bin_polinomial = {}
+    count_of_args = pol_power+1
+    for i in frash_input:
+        if (i == '1' or i == '0') and (pol_power + 1):
+            bin_polinomial[count_of_args - pol_power - 1] = int(i)%2
+            pol_power -= 1
+    print(bin_polinomial)
+    return bin_polinomial
+
+
 
 def num_group_ord(mnum:int, mode:str, to_str=False):
 
@@ -153,22 +176,101 @@ def decompos_into_subgroups(mnum:int, mode:str, to_str=False):
 
     return subgroups_dict
 
-def elipt_polinom(mnum:int):
-    nums = []
-    for x in range(23):
-        for y in range(23):
-            if (y**2)%mnum == (x**3+x+1)%mnum:
-                nums.append((x, y))
+def elipt_points_sum(x1num:int, y1num:int, x2num:int, y2num:int, pnum:int):
+    denominator = x2num-x1num
+    if denominator < 0:
+        denominator = pnum-abs(denominator)%pnum
+    x3num = (((y2num-y1num)*reverse_elem_Zm(denominator, pnum))**2)%pnum-x1num-x2num
+    if x3num < 0:
+        x3num = pnum-abs(x3num)%pnum
+    y3num = -1*y1num+(((y2num-y1num)*reverse_elem_Zm(denominator, pnum))*(x1num-x3num))%pnum
+    if y3num < 0:
+        y3num = pnum-abs(y3num)%pnum
+    return [x3num%pnum, y3num%pnum]
 
+def elipt_points_double(x1num:int, y1num:int, pnum:int, anum:int):
+    x3num = (((3*(x1num**2)+anum)*reverse_elem_Zm(2*y1num, pnum))**2)%pnum -2*x1num
+    print((((3*(x1num**2)+anum)*reverse_elem_Zm(2*y1num, pnum))**2)%pnum)
+    if x3num < 0:
+        x3num = pnum-abs(x3num)%pnum
+    y3num = -1*y1num+((3*x1num**2+anum)*reverse_elem_Zm(2*y1num, pnum)*(x1num-x3num)%pnum)
+    if y3num < 0:
+        y3num = pnum-abs(y3num)%pnum
+    return [x3num%pnum, y3num%pnum]
+
+def ellipt_polynomial(anum:int, bnum:int, pnum:int):
+    nums = []
+    p_bases, p_indexes = decomposition_min(abs(pnum))
+    if len(p_bases) * p_indexes[0] != 1:
+        log.info(f"The m={pnum} is not simple")
+        log.info("BREAKING...")
+        return
+
+    # eliptic polynomial points list finding algorithm
+    for x in range(pnum):
+        for y in range(pnum):
+            if (y**2)%pnum == (x**3+(anum*x)+bnum)%pnum:
+                nums.append([x, y])
+
+    log.info(f"Polynomial order IS {len(nums)+1}")
     out_str = ""
     for i in range(0,(len(nums)//8)*8,8):
         for j in range(8):
-            out_str += (str(nums[i+j]) + "  ")
-        out_str += '\n'
+            out_str += (str(nums[i+j]) + ",  ")
+        out_str += '\n\t '
+   
+    for j in range(1, len(nums) - (len(nums)//8)*8+1):
+        out_str += str(nums[(len(nums)//8)*8+j-1]) + ",  "
+    # adding the infinity symbol
+    out_str += "o."
+    log.info(f"Sets of points in Y^2=X^3+{anum}X+{bnum}")
+    log.info(out_str)
+
+    return (nums, 'o')
+
+def point_order(xnum:int, ynum:int, pnum:int, anum:int, bnum:int):
+
+    n_limit = floor(pnum+1+2*(pnum**(0.5)))
+    m_parameter = floor(n_limit**0.5)
+
+    pairs_dict = {j:[-1,1] for j in range(1,m_parameter+1)}
+
+    el_curve_points = ellipt_polynomial(anum, bnum, pnum)
+
+    pairs_dict[1]=[xnum,ynum]
+    for j in range(2,m_parameter+1):
+        if j%2 == 0:
+            pairs_dict[j]=elipt_points_double(pairs_dict[j//2][0], pairs_dict[j//2][1], pnum, anum)
+        else:
+            temp_point = elipt_points_double(pairs_dict[j//2][0], pairs_dict[j//2][1], pnum, anum)
+            temp_point = elipt_points_sum(temp_point[0],temp_point[1],xnum, ynum, pnum)
+            pairs_dict[j] = temp_point
     
+    '''alpha = [pairs_dict[m_parameter-1][0], pnum-pairs_dict[m_parameter-1][1]]
+    gamma = alpha
+    print(gamma)
+    print(alpha)
 
-    for j in range(len(nums) - (len(nums)//8)*8+1):
-        out_str += str(nums[(len(nums)//8)*8+j-1]) + "  "
+    for i in range(1,m_parameter):
+        if gamma in el_curve_points:
+            log.info("Order HAS FOUND")
+            list(pairs_dict.keys())[list(pairs_dict.values()).index(gamma)]
+            log.info(f"Counting the order {m_parameter}*{i}+{j}")
+            break
+        else:
+            if gamma == alpha:
+                gamma = elipt_points_double(gamma[0], gamma[1], pnum, anum)
+            else:
+                print(gamma)
+                print(alpha)
+                gamma = elipt_points_sum(gamma[0], gamma[1], alpha[0], alpha[1], pnum)'''
+    print(pairs_dict)
+    return pairs_dict
+    
+        
+                    
 
-    print(out_str)
-    return
+        
+
+
+

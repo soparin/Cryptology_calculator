@@ -84,6 +84,23 @@ def prim_root_min(mnum:int):
     else:
         return
 
+def reverse_elem_Zm_min(anum:int, mnum:int):
+    if mnum < 1:
+        log.info(f"Wrong value of nature number argument mnum = {mnum}")
+        log.info ("BREAKING...")
+        return
+    if GCD_min(anum, mnum) != 1:
+        log.info(f"({anum},{mnum}) != 1, numbers is not coprime")
+        log.info(f"Sorry, {anum} have not a reverse element with module {mnum}")
+        log.info ("BREAKING...")
+        return
+    unum = 0
+
+    while((unum * (anum % mnum)) % mnum != 1):
+        unum += 1
+
+    return unum
+
 def legendre_symbol_min(anum:int, pnum:int, to_str=False):
     if GCD_min(abs(anum), abs(pnum)) != 1:
         log.info(f"Sorry, the solution CAN'T BE FOUND, " +
